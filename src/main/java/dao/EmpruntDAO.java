@@ -18,8 +18,9 @@ public class EmpruntDAO {
 
     // Ajouter un emprunt
     public void ajouterEmprunt(Emprunt emprunt) {
-        String sql = "INSERT INTO Emprunt (idMembre, idLivre, dateEmprunt, dateRetourPrevue) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        String sql = "INSERT INTO Emprunt (membreId, livreId, dateEmprunt, dateRetourPrevue) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, emprunt.getMembreId());
             stmt.setInt(2, emprunt.getLivreId());
             stmt.setDate(3, Date.valueOf(emprunt.getDateEmprunt()));
@@ -33,12 +34,13 @@ public class EmpruntDAO {
 
     // Mettre à jour la date de retour d'un emprunt
     public void retournerLivre(int idEmprunt, LocalDate dateRetourEffective) {
-        String sqlUpdate = "UPDATE Emprunt SET dateRetourEffective = ?, penalite = ? WHERE id = ?";
-        String sqlSelect = "SELECT dateRetourPrevue FROM Emprunt WHERE id = ?";
+        String sqlUpdate = "UPDATE Emprunt SET dateRetourEffective = ?, penalite = ? WHERE idemprunt = ?";
+        String sqlSelect = "SELECT dateRetourPrevue FROM Emprunt WHERE idemprunt = ?";
         double montantParJour = 5.0; // Exemple de montant par jour de retard
 
-        try (PreparedStatement selectStmt = connection.prepareStatement(sqlSelect);
-             PreparedStatement updateStmt = connection.prepareStatement(sqlUpdate)) {
+        try {
+            PreparedStatement selectStmt = connection.prepareStatement(sqlSelect);
+            PreparedStatement updateStmt = connection.prepareStatement(sqlUpdate);
 
             // Récupérer la date de retour prévue
             selectStmt.setInt(1, idEmprunt);
@@ -78,9 +80,10 @@ public class EmpruntDAO {
 
     // Rechercher les emprunts actifs par membre
     public List<Emprunt> rechercherEmpruntsParMembre(int idMembre) {
-        String sql = "SELECT * FROM Emprunt WHERE idMembre = ? AND dateRetourEffective IS NULL";
+        String sql = "SELECT * FROM Emprunt WHERE membreId = ? AND dateRetourEffective IS NULL";
         List<Emprunt> emprunts = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, idMembre);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -103,8 +106,9 @@ public class EmpruntDAO {
         List<Emprunt> emprunts = new ArrayList<>();
         String sql = "SELECT * FROM Emprunt";
 
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
                 Emprunt emprunt = new Emprunt(

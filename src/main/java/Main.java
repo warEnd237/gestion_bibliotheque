@@ -133,8 +133,9 @@ public class Main {
 
                 case 2:
                     // Rechercher un membre
-                    System.out.print("Entrez le nom du membre à rechercher : ");
-                    String rechercheNom = scanner.nextLine();
+                    System.out.print("Entrez le nom du membre à rechercher (attention la recherche est sensible à la casse !) : ");
+                    String findNom = scanner.nextLine();
+                    String rechercheNom = "%" + findNom + "%";
                     List<Membre> membres = membreDAO.rechercherMembreParNom(rechercheNom);
                     if (membres.isEmpty()) {
                         System.out.println("Aucun membre trouvé.");
@@ -169,7 +170,8 @@ public class Main {
             System.out.println("1. Ajouter un livre");
             System.out.println("2. Rechercher un livre par titre");
             System.out.println("3. Afficher tous les livres");
-            System.out.println("4. Retour au menu principal");
+            System.out.println("4. Supprimer un livre");
+            System.out.println("5. Retour au menu principal");
             System.out.print("Choisissez une option : ");
             int choixLivre = scanner.nextInt();
             scanner.nextLine(); // Consommer le saut de ligne
@@ -193,7 +195,8 @@ public class Main {
                 case 2:
                     // Rechercher un livre
                     System.out.print("Entrez le titre à rechercher : ");
-                    String titreRecherche = scanner.nextLine();
+                    String find = scanner.nextLine();
+                    String titreRecherche = "%" + find + "%";
                     List<Livre> livres = livreDAO.rechercherLivreParTitre(titreRecherche);
                     if (livres.isEmpty()) {
                         System.out.println("Aucun livre trouvé.");
@@ -211,8 +214,13 @@ public class Main {
                         System.out.println(l);
                     }
                     break;
-
                 case 4:
+                    System.out.print("Entrez l'identifiant du livre à supprimer : ");
+                    int idLivre = scanner.nextInt();
+                    livreDAO.supprimerLivre(idLivre);
+                    break;
+
+                case 5:
                     // Retour au menu principal
                     return;
 

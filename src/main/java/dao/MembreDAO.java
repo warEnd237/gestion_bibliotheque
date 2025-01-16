@@ -19,7 +19,8 @@ public class MembreDAO {
 
     public String verifierMembre(int id) {
         String sql = "SELECT nom FROM Membre WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -37,7 +38,8 @@ public class MembreDAO {
     public int ajouterMembre(Membre membre) {
         String query = "INSERT INTO Membre (nom, prenom, email, adhesiondate) VALUES (?, ?, ?, ?) RETURNING id";
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setString(1, membre.getNom());
             stmt.setString(2, membre.getPrenom());
             stmt.setString(3, membre.getEmail());
@@ -61,7 +63,8 @@ public class MembreDAO {
     // Supprimer un membre
     public void supprimerMembre(int id) {
         String query = "DELETE FROM Membre WHERE id = ?";
-        try (Connection conn = connection; PreparedStatement stmt = conn.prepareStatement(query)) {
+        try {
+            Connection conn = connection; PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
@@ -74,15 +77,17 @@ public class MembreDAO {
     public List<Membre> rechercherMembreParNom(String nom) {
         String query = "SELECT * FROM Membre WHERE nom LIKE ?";
         List<Membre> membres = new ArrayList<>();
-        try (Connection conn = connection; PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, "%" + nom + "%");
+        try {
+            Connection conn = connection; PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, nom);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String prenom = rs.getString("prenom");
+                String vraiNom = rs.getString("nom");
                 String email = rs.getString("email");
-                LocalDate adhesionDate = rs.getDate("adhesion_date").toLocalDate(); // Conversion de java.sql.Date en LocalDate
-                Membre membre = new Membre(id, nom, prenom, email, adhesionDate);
+                LocalDate adhesionDate = rs.getDate("adhesionDate").toLocalDate(); // Conversion de java.sql.Date en LocalDate
+                Membre membre = new Membre(id, vraiNom, prenom, email, adhesionDate);
                 membres.add(membre);
             }
         }
